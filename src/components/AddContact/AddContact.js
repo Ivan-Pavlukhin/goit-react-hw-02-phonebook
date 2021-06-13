@@ -1,4 +1,6 @@
 import { Component } from "react";
+import { PropTypes } from "prop-types";
+import style from "./AddContact.module.css";
 
 const INITIAL_STATE = {
   name: "",
@@ -13,19 +15,31 @@ export class AddContact extends Component {
     this.setState({ [name]: value });
   };
 
+  searchRepeatName() {
+    const { name } = this.state;
+    const normalizedName = name.toLowerCase();
+    return this.props.contacts.filter(
+      (contact) => contact.name.toLowerCase() === normalizedName
+    );
+  }
+
   handelSubmit = (e) => {
     e.preventDefault();
+    if (this.searchRepeatName().length !== 0) {
+      alert(`${this.state.name} is already in contacts`);
+      return;
+    }
     this.props.onSubmit({ ...this.state });
     this.setState({ ...INITIAL_STATE });
   };
 
   render() {
     return (
-      <form onSubmit={this.handelSubmit}>
-        <label>
-          {" "}
+      <form className={style.form} onSubmit={this.handelSubmit}>
+        <label className={style.form__item}>
           Name
           <input
+            className={style.form__input}
             type="text"
             name="name"
             value={this.state.name}
@@ -35,10 +49,10 @@ export class AddContact extends Component {
             onChange={this.handelChange}
           />
         </label>
-        <label>
-          {" "}
+        <label className={style.form__item}>
           Number
           <input
+            className={style.form__input}
             type="tel"
             name="number"
             value={this.state.number}
@@ -48,8 +62,18 @@ export class AddContact extends Component {
             onChange={this.handelChange}
           />
         </label>
-        <button type="submit">Добавить контакт</button>
+        <button type="submit">Add contact</button>
       </form>
     );
   }
 }
+
+// AddContact.propsTypes = {
+//   contacts: PropTypes.arrayFor(
+//     PropTypes.shape({
+//       id: PropTypes.number.required,
+//       name: PropTypes.string.required,
+//       number: PropTypes.number.required,
+//     })
+//   ),
+// };
